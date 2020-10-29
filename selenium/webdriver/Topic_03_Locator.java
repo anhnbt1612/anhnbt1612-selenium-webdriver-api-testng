@@ -17,10 +17,11 @@ public class Topic_03_Locator {
 	WebDriver driver;
 	Random rand;
 	String emailAddress, firstName, lastName, password;
+	String LocalFolder = System.getProperty("user.dir");
 
 	@BeforeClass
 	public void beforeClass() {
-		System.setProperty("webdriver.chrome.driver", ".\\BrowserDrivers\\chromedriver.exe");
+		System.setProperty("webdriver.chrome.driver", LocalFolder + "\\BrowserDrivers\\chromedriver.exe");
 		driver = new ChromeDriver();
 		rand = new Random();
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
