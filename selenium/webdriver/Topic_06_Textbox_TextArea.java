@@ -50,6 +50,21 @@ public class Topic_06_Textbox_TextArea {
 	
 	@Test
 	public void TC_03_New_Customer() {
+		driver.findElement(By.xpath("//a[text()='New Customer']")).click();
+		
+		driver.findElement(By.name("name")).sendKeys("Anhnbt");
+		driver.findElement(By.name("dob")).sendKeys("16/12/1992");
+		driver.findElement(By.name("addr")).sendKeys("CT1 Ngo Thi Nham");
+		driver.findElement(By.name("city")).sendKeys("Ha Dong");
+		driver.findElement(By.name("state")).sendKeys("Ha Noi");
+		driver.findElement(By.name("pinno")).sendKeys("123456");
+		driver.findElement(By.name("telephonno")).sendKeys("848191820");
+		driver.findElement(By.name("emailid")).sendKeys("rickyta1612@gmail.com;");
+		driver.findElement(By.name("password")).sendKeys("456789"); 
+		
+		driver.findElement(By.name("sub")).click();
+		
+		Assert.assertEquals(driver.findElement(By.className("heading3")).getText(), "Customer Registered Successfully!!!");
 		
 	}
 	
