@@ -1,10 +1,13 @@
 package webdriver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
@@ -33,7 +36,6 @@ public class Topic_07_Default_Dropdown {
 		driver = new ChromeDriver();
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		driver.manage().window().maximize();
-		driver.get("http://demo.nopcommerce.com/");
 		firstName = "Anh";
 		lastName = "Nguyen";
 		password = "123456";
@@ -44,8 +46,9 @@ public class Topic_07_Default_Dropdown {
 		year = "1992";
 	}
 
-	@Test
+	@Test(enabled = false)
 	public void TC_01_Register() throws InterruptedException {
+		driver.get("http://demo.nopcommerce.com/");
 		driver.findElement(By.className("ico-register")).click();
 		driver.findElement(genderMaleBy).click();
 		driver.findElement(firstNameBy).sendKeys(firstName);
@@ -102,6 +105,41 @@ public class Topic_07_Default_Dropdown {
 		select = new Select(driver.findElement(yearBy));
 		Assert.assertEquals(select.getFirstSelectedOption().getText(), year);
 
+	}
+	
+	@Test
+	public void TC_02_Multiple() {
+		driver.get("https://automationfc.github.io/basic-form/");
+		List<String> itemText = new ArrayList<String>();
+		itemText.add("Manual");
+		itemText.add("Mobile");
+		itemText.add("Security");
+		itemText.add("Functional UI");
+		
+		select = new Select(driver.findElement(By.name("user_job2")));
+		
+		select.selectByVisibleText("Manual");
+		select.selectByVisibleText("Mobile");
+		select.selectByVisibleText("Security");
+		select.selectByVisibleText("Functional UI");
+		
+		List<WebElement> itemSelected = select.getAllSelectedOptions();
+		
+		List<String> itemSelectedText = new ArrayList<String>();
+		
+		Assert.assertEquals(itemSelected.size(), 4);
+		
+		for (WebElement item : itemSelected) {
+			itemSelectedText.add(item.getText());
+			System.out.println(item.getText());
+		}
+		
+		Assert.assertTrue(itemSelectedText.contains("Manual"));
+		Assert.assertTrue(itemSelectedText.contains("Mobile"));
+		Assert.assertTrue(itemSelectedText.contains("Security"));
+		Assert.assertTrue(itemSelectedText.contains("Functional UI"));
+		
+		Assert.assertEquals(itemText, itemSelectedText);
 	}
 	
 	public String generateEmail() {
