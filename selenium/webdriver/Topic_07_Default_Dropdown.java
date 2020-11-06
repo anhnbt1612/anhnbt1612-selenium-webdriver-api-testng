@@ -46,7 +46,7 @@ public class Topic_07_Default_Dropdown {
 		year = "1992";
 	}
 
-	@Test(enabled = false)
+	@Test
 	public void TC_01_Register() throws InterruptedException {
 		driver.get("http://demo.nopcommerce.com/");
 		driver.findElement(By.className("ico-register")).click();
