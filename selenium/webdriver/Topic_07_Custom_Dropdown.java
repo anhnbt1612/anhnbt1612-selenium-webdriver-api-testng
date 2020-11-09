@@ -29,18 +29,53 @@ public class Topic_07_Custom_Dropdown {
 		driver.manage().window().maximize();
 	}
 
-	@Test
-	public void TC_01_jQuery() {
+	@Test(enabled=false)
+	public void TC_01_jQuery_CustomDropdown() {
 	driver.get("http://jqueryui.com/resources/demos/selectmenu/default.html");
 	
 	selectItemInCustomDropdown("//span[@id='number-button']", "//ul[@id='number-menu']//div", "4");
 	sleepInSecond(2);
+	Assert.assertTrue(driver.findElement(By.xpath("//span[text()='4']")).isDisplayed());
+
 	
 	selectItemInCustomDropdown("//span[@id='number-button']", "//ul[@id='number-menu']//div", "15");
 	sleepInSecond(2);
+	Assert.assertEquals(driver.findElement(By.xpath("//span[@id='number-button']")).getText(), "15");
+
 	
 	selectItemInCustomDropdown("//span[@id='number-button']", "//ul[@id='number-menu']//div", "8");
 	sleepInSecond(2);
+	Assert.assertEquals(driver.findElement(By.xpath("//span[@id='number-button']")).getText(), "8");
+
+	}
+	
+	@Test(enabled=false)
+	public void TC_02_vueJS_Editable_Dropdown() {
+		driver.get("https://react.semantic-ui.com/maximize/dropdown-example-search-selection/");
+		selectItemInEditableDropdown("//input[@class='search']", "//div[@role='combobox']//span[@class='text']", "Belgium");
+		sleepInSecond(3);
+		Assert.assertTrue(driver.findElement(By.xpath("//span[text()='Belgium']")).isDisplayed());
+		
+	}
+	
+	@Test
+	public void Multiple_Custom_Select_Dropdown() {
+		driver.get("");
+		
+	}
+	
+	public void selectItemInEditableDropdown(String parentXpath, String allItemXpath, String expectedValue) {
+		driver.findElement(By.xpath(parentXpath)).sendKeys(expectedValue);
+		explicitWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(allItemXpath)));
+		List<WebElement> allItems = driver.findElements(By.xpath(parentXpath));
+		int allItemNumber = allItems.size();
+		for(int i = 0; i < allItemNumber; i++) {
+			String actualValue = allItems.get(i).getText();
+			if(actualValue.equals(expectedValue)) {
+				allItems.get(i).click();
+				break;
+			}
+		}
 	}
 	
 	public void selectItemInCustomDropdown(String parentXpath, String allItemXpath, String expectedValueItem) {
