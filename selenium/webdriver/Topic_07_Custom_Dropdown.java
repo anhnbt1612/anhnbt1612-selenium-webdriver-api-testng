@@ -23,6 +23,8 @@ public class Topic_07_Custom_Dropdown {
 	WebDriverWait explicitWait;
 	JavascriptExecutor jsExecutor;
 	String LocalFolder = System.getProperty("user.dir");
+	String[] firstMonths = {"March", "April", "December"};
+	String[] secondMonths = {"March", "April", "December", "July", "August"};
 	
 	@BeforeClass
 	public void beforeClass() {
@@ -64,11 +66,21 @@ public class Topic_07_Custom_Dropdown {
 	}
 	
 	@Test
-	public void Multiple_Custom_Select_Dropdown() {
+	public void TC_03_Multiple_Custom_Select_Dropdown() {
 		driver.get("http://multiple-select.wenzhixin.net.cn/templates/template.html?v=189&url=basic.html");
+		SelectMultiItemDropdown("(//button[@class='ms-choice'])[1]", "(//button[@class='ms-choice'])[1]/following-sibling::div//span", firstMonths);
+		sleepInSecond(2);
+		Assert.assertTrue(areItemSelected(firstMonths));
+		
+		driver.navigate().refresh();
+		
+		SelectMultiItemDropdown("(//button[@class='ms-choice'])[1]", "(//button[@class='ms-choice'])[1]/following-sibling::div//span", secondMonths);
+		sleepInSecond(2);
+		Assert.assertTrue(areItemSelected(secondMonths));
 		
 		
 	}
+	
 	
 	public void SelectMultiItemDropdown(String parentXpath, String childXpath, String [] expectedValue) {
 		driver.findElement(By.xpath(parentXpath)).click();
@@ -79,16 +91,39 @@ public class Topic_07_Custom_Dropdown {
 			//"January", "April", "July"
 			for(String item: expectedValue) {
 				if(childElement.getText().equals(item)) {
-					//3: scroll đến item cần chọn (nếu như item cần chọn có thể nhìn thấy thì không cần scroll
-					jsExecutor.executeScript("argument[0].scrollIntoView(true);", childElement);
-					sleepInSecond(1);
-					
-					//4: click vào item cần chọn
+					//Click vào item cần chọn
 					childElement.click();
 					sleepInSecond(1);
 					
+					List<WebElement> itemSelected =driver.findElements(By.xpath("//li[@class='selected']//input"));
+					System.out.println("Item Selected = " + itemSelected.size());
+					if(expectedValue.length == itemSelected.size()) {
+						break;
+					}
+					
 				}
 			}
+		}
+	}
+	
+	public boolean areItemSelected(String[] itemSelectedText) {
+		List<WebElement> itemSelected = driver.findElements(By.xpath("//li[@class='selected']//input"));
+		int numberItemSelected = itemSelected.size();
+		
+		String allItemSelectedText = driver.findElement(By.xpath("(//button[@class='ms-choice']/span)[1]")).getText();
+		System.out.println("Text da chon = " + allItemSelectedText);
+		
+		//"March", "April", "December"
+		if(numberItemSelected <= 3 && numberItemSelected > 0) {
+			for(String item : itemSelectedText) {
+				if(allItemSelectedText.contains(item)) {
+					break;
+				}
+			}
+			return true;
+		}
+		else {
+			return driver.findElement(By.xpath("(//button[@class='ms-choice'])[1]//span[text()='"+ numberItemSelected + " of 12 selected']")).isDisplayed();
 		}
 	}
 	
