@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.runners.AllTests;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -15,16 +16,20 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import netscape.javascript.JSException;
+
 public class Topic_07_Custom_Dropdown {
 	WebDriver driver;
 	WebDriverWait explicitWait;
+	JavascriptExecutor jsExecutor;
 	String LocalFolder = System.getProperty("user.dir");
-
+	
 	@BeforeClass
 	public void beforeClass() {
 		System.setProperty("webdriver.chrome.driver", LocalFolder + "\\BrowserDrivers\\chromedriver.exe");
 		driver = new ChromeDriver();
 		explicitWait = new WebDriverWait(driver, 30);
+		jsExecutor = (JavascriptExecutor) driver;
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		driver.manage().window().maximize();
 	}
@@ -60,8 +65,31 @@ public class Topic_07_Custom_Dropdown {
 	
 	@Test
 	public void Multiple_Custom_Select_Dropdown() {
-		driver.get("");
+		driver.get("http://multiple-select.wenzhixin.net.cn/templates/template.html?v=189&url=basic.html");
 		
+		
+	}
+	
+	public void SelectMultiItemDropdown(String parentXpath, String childXpath, String [] expectedValue) {
+		driver.findElement(By.xpath(parentXpath)).click();
+		explicitWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(childXpath)));
+		List<WebElement> allItems = driver.findElements(By.xpath(childXpath));
+		
+		for(WebElement childElement : allItems) {
+			//"January", "April", "July"
+			for(String item: expectedValue) {
+				if(childElement.getText().equals(item)) {
+					//3: scroll đến item cần chọn (nếu như item cần chọn có thể nhìn thấy thì không cần scroll
+					jsExecutor.executeScript("argument[0].scrollIntoView(true);", childElement);
+					sleepInSecond(1);
+					
+					//4: click vào item cần chọn
+					childElement.click();
+					sleepInSecond(1);
+					
+				}
+			}
+		}
 	}
 	
 	public void selectItemInEditableDropdown(String parentXpath, String allItemXpath, String expectedValue) {
