@@ -1,5 +1,6 @@
 package webdriver;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -38,7 +39,7 @@ public class Topic_12_Frame_iFrame {
 		
 	}
 	
-	@Test
+	@Test(enabled=false)
 	public void TC_02_iFrame() {
 		driver.get("https://automationfc.com/2020/02/18/training-online-automation-testing/");
 		driver.switchTo().frame(driver.findElement(By.xpath("//div[@class='fb-page fb_iframe_widget']//iframe[@title='fb:page Facebook Social Plugin']")));
@@ -47,6 +48,89 @@ public class Topic_12_Frame_iFrame {
 		
 		driver.switchTo().defaultContent();
 		Assert.assertEquals(driver.findElement(By.xpath("//h1[@class='post-title']")).getText(), "[Training Online] – Fullstack Selenium WebDriver Framework in Java (Livestream)");
+	}
+	
+	@Test(enabled=false)
+	public void TC_03_Only_2_Tab_Window() {
+		driver.get("https://automationfc.com/2020/02/18/training-online-automation-testing/");
+		
+		String parentWindowID = driver.getWindowHandle();
+		System.out.println("Parent = " + parentWindowID);
+		
+		driver.findElement(By.xpath("//a[text()='ELEARNING']")).click();
+
+		switchToWindowByI(parentWindowID);
+		
+		Assert.assertEquals(driver.getTitle(), "Automation FC");
+		Assert.assertEquals(driver.getCurrentUrl(), "https://automationfc.vn/");	
+	}
+	
+	@Test
+	public void TC_04_More_than_2_Tab_Window() {
+		driver.get("https://automationfc.com/2020/02/18/training-online-automation-testing/");
+		
+		//Click vào Elearning chuyển qua tab mới
+		driver.findElement(By.xpath("//a[text()='ELEARNING']")).click();
+		
+		switchToWindowByTitle("Automation FC");
+		sleepInSecond(5);
+		Assert.assertEquals(driver.getTitle(), "Automation FC");
+		Assert.assertEquals(driver.getCurrentUrl(), "https://automationfc.vn/");
+		driver.close();
+
+		//Quay về trang Parent
+		switchToWindowByTitle("[Training Online] – Fullstack Selenium WebDriver Framework in Java (Livestream) – Automation FC Blog");
+		Assert.assertEquals(driver.getCurrentUrl(), "https://automationfc.com/2020/02/18/training-online-automation-testing/");		
+
+		//Switch vào iframe của FB
+		driver.switchTo().frame(driver.findElement(By.xpath("//div[@class='fb-page fb_iframe_widget']//iframe[@title='fb:page Facebook Social Plugin']")));
+		sleepInSecond(5);
+		//Click vào automation FC text trong Fanpage (FB)
+		driver.findElement(By.xpath("//a[@title='Automation FC']")).click();
+		
+		switchToWindowByTitle("Automation FC - Trang chủ | Facebook");
+		sleepInSecond(5);
+		Assert.assertEquals(driver.getCurrentUrl(), "https://www.facebook.com/automationfc/");
+		driver.findElement(By.id("email")).sendKeys("rickyta1612@gmail.com");
+		driver.findElement(By.id("pass")).sendKeys("ducvuong@#2811");
+		driver.findElement(By.xpath("//input[@type='submit']"));
+		
+		switchToWindowByTitle("[Training Online] – Fullstack Selenium WebDriver Framework in Java (Livestream) – Automation FC Blog");
+		Assert.assertEquals(driver.getCurrentUrl(), "https://automationfc.com/2020/02/18/training-online-automation-testing/");	
+
+		
+	}
+	
+	
+	//chỉ đúng khi có duy nhất 2 tab
+	public void switchToWindowByI(String parentID) {
+		//Lấy ra tất cả ID trong tab
+		Set<String> allWindows = driver.getWindowHandles();
+		//Duyệt qua từng ID đã lấy được
+		for (String windowID : allWindows) {
+			//Nếu ID khác parent thì switch qua
+			if(!windowID.equals(parentID)) {
+				driver.switchTo().window(windowID);
+				break;
+			}
+		}
+	}
+	
+	//Switch bằng title (Đúng với tất cả trường hợp: 2/ >2 tab
+	public void switchToWindowByTitle(String expectedTitle) {
+		//Lấy ra tất cả ID của tab đang có
+		Set<String> allWindows = driver.getWindowHandles();
+		//Duyệt qua từng ID đã lấy được
+		for (String windowID : allWindows) {
+			//Switch vào từng ID trước
+			driver.switchTo().window(windowID);
+			//lấy ra title của tab đó
+			String actualTitle = driver.getTitle();
+			//Ktra nếu title của tab này mà bằng với title mình mong muốn thì break
+			if(actualTitle.equals(expectedTitle)) {
+				break;
+			}
+		}
 	}
 	
 	public void sleepInSecond(long timeInSecond) {
