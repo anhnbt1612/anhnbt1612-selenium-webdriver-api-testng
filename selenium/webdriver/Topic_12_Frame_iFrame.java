@@ -81,6 +81,7 @@ public class Topic_12_Frame_iFrame {
 		sleepInSecond(5);
 		Assert.assertEquals(driver.getTitle(), "Automation FC");
 		Assert.assertEquals(driver.getCurrentUrl(), "https://automationfc.vn/");
+		driver.findElement(By.xpath("//a[text()='Đăng nhập']")).click();
 		driver.close();
 
 		//Quay về trang Parent
