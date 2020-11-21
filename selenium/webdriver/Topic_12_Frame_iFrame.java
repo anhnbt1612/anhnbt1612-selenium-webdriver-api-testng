@@ -4,8 +4,11 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -16,6 +19,7 @@ public class Topic_12_Frame_iFrame {
 	WebDriver driver;
 	WebDriverWait explicitWait;
 	String LocalFolder = System.getProperty("user.dir");
+	JavascriptExecutor jsExecutor;
 
 	@BeforeClass
 	public void beforeClass() {
@@ -24,6 +28,7 @@ public class Topic_12_Frame_iFrame {
 		explicitWait = new WebDriverWait(driver, 30);
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		driver.manage().window().maximize();
+		jsExecutor = (JavascriptExecutor) driver;
 		
 	}
 
@@ -44,7 +49,7 @@ public class Topic_12_Frame_iFrame {
 		driver.get("https://automationfc.com/2020/02/18/training-online-automation-testing/");
 		driver.switchTo().frame(driver.findElement(By.xpath("//div[@class='fb-page fb_iframe_widget']//iframe[@title='fb:page Facebook Social Plugin']")));
 		Assert.assertTrue(driver.findElement(By.xpath("//a[@title='Automation FC']")).isDisplayed());
-		Assert.assertEquals(driver.findElement(By.xpath("//a[@title='Automation FC']/parent::div/following-sibling::div")).getText(), "1,937 likes");
+		Assert.assertEquals(driver.findElement(By.xpath("//a[@title='Automation FC']/parent::div/following-sibling::div")).getText(), "1,938 likes");
 		
 		driver.switchTo().defaultContent();
 		Assert.assertEquals(driver.findElement(By.xpath("//h1[@class='post-title']")).getText(), "[Training Online] – Fullstack Selenium WebDriver Framework in Java (Livestream)");
@@ -81,6 +86,8 @@ public class Topic_12_Frame_iFrame {
 		//Quay về trang Parent
 		switchToWindowByTitle("[Training Online] – Fullstack Selenium WebDriver Framework in Java (Livestream) – Automation FC Blog");
 		Assert.assertEquals(driver.getCurrentUrl(), "https://automationfc.com/2020/02/18/training-online-automation-testing/");		
+
+		scrollToFrameByJs(driver.findElement(By.xpath("//div[@class='fb-page fb_iframe_widget']//iframe[@title='fb:page Facebook Social Plugin']")));
 
 		//Switch vào iframe của FB
 		driver.switchTo().frame(driver.findElement(By.xpath("//div[@class='fb-page fb_iframe_widget']//iframe[@title='fb:page Facebook Social Plugin']")));
@@ -139,6 +146,10 @@ public class Topic_12_Frame_iFrame {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void scrollToFrameByJs(WebElement element) {
+		jsExecutor.executeScript("arguments[0].scrollIntoView();", element);
 	}
 
 
