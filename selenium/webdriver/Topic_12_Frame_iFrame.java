@@ -73,6 +73,7 @@ public class Topic_12_Frame_iFrame {
 	@Test
 	public void TC_04_More_than_2_Tab_Window() {
 		driver.get("https://automationfc.com/2020/02/18/training-online-automation-testing/");
+		String parentWindowID = driver.getWindowHandle();
 		
 		//Click vào Elearning chuyển qua tab mới
 		driver.findElement(By.xpath("//a[text()='ELEARNING']")).click();
@@ -84,7 +85,6 @@ public class Topic_12_Frame_iFrame {
 		driver.findElement(By.xpath("//a[text()='Đăng nhập']")).click();
 		sleepInSecond(2);
 		Assert.assertEquals(driver.findElement(By.xpath("//h2[@class='title text-center']")).getText(), "Đăng nhập");
-		driver.close();
 
 		//Quay về trang Parent
 		switchToWindowByTitle("[Training Online] – Fullstack Selenium WebDriver Framework in Java (Livestream) – Automation FC Blog");
@@ -119,9 +119,12 @@ public class Topic_12_Frame_iFrame {
 		driver.findElement(By.xpath("//yt-icon[@class='style-scope ytd-searchbox']")).click();
 		sleepInSecond(3);
 		
-		switchToWindowByTitle("[Training Online] – Fullstack Selenium WebDriver Framework in Java (Livestream) – Automation FC Blog");
-		Assert.assertEquals(driver.getCurrentUrl(), "https://automationfc.com/2020/02/18/training-online-automation-testing/");	
-		sleepInSecond(2);
+		Assert.assertTrue(closeAllWindowWithoutParent(parentWindowID));
+		sleepInSecond(3);
+		
+//		switchToWindowByTitle("[Training Online] – Fullstack Selenium WebDriver Framework in Java (Livestream) – Automation FC Blog");
+//		Assert.assertEquals(driver.getCurrentUrl(), "https://automationfc.com/2020/02/18/training-online-automation-testing/");	
+//		sleepInSecond(2);
 
 		
 	}
@@ -155,6 +158,26 @@ public class Topic_12_Frame_iFrame {
 			if(actualTitle.equals(expectedTitle)) {
 				break;
 			}
+		}
+	}
+	
+	//Đóng tất cả tab khác trừ parent
+	public boolean closeAllWindowWithoutParent(String parentID) {
+		Set<String> allWindows = driver.getWindowHandles();
+		for (String runWindow : allWindows) {
+			if(!runWindow.equals(parentID)) {
+				driver.switchTo().window(runWindow);
+				driver.close();
+			}
+		}
+		//Switch về lại tab parent
+		driver.switchTo().window(parentID);
+		//Kiểm tra xem có chắc chắn là còn duy nhất 1 tab hay không
+		if(driver.getWindowHandles().size() == 1) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 	
