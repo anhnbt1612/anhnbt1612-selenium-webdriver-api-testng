@@ -107,6 +107,21 @@ public class Topic_12_Frame_iFrame {
 		
 		switchToWindowByTitle("[Training Online] – Fullstack Selenium WebDriver Framework in Java (Livestream) – Automation FC Blog");
 		Assert.assertEquals(driver.getCurrentUrl(), "https://automationfc.com/2020/02/18/training-online-automation-testing/");	
+		
+		scrollToFrameByJs(driver.findElement(By.cssSelector("iframe.youtube-player")));
+		driver.switchTo().frame(driver.findElement(By.cssSelector("iframe.youtube-player")));
+		driver.findElement(By.xpath("//a[text()='[Online 10] - Topic 01 (Intro Course/ Outline/ Target/ Rule)']")).click();
+		sleepInSecond(5);
+		switchToWindowByTitle("[Online 10] - Topic 01 (Intro Course/ Outline/ Target/ Rule) - YouTube");
+		sleepInSecond(2);
+		driver.findElement(By.xpath("//input[@id='search']")).sendKeys("King of Rap");
+		sleepInSecond(5);
+		driver.findElement(By.xpath("//yt-icon[@class='style-scope ytd-searchbox']")).click();
+		sleepInSecond(3);
+		
+		switchToWindowByTitle("[Training Online] – Fullstack Selenium WebDriver Framework in Java (Livestream) – Automation FC Blog");
+		Assert.assertEquals(driver.getCurrentUrl(), "https://automationfc.com/2020/02/18/training-online-automation-testing/");	
+		sleepInSecond(2);
 
 		
 	}
